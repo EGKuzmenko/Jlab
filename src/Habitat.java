@@ -42,7 +42,7 @@ public class Habitat extends JFrame implements KeyListener {
         this.mCoordinateX = mCoordinateX;
         this.mCoordinateY = mCoordinateY;
         probabilityDevelopers = 0.5;
-        percentageOfDevelopers = 0.5;
+        percentageOfDevelopers = 25;
         timeOfDevelopers = 1;
         timeOfManagers = 1;
     }
@@ -58,7 +58,7 @@ public class Habitat extends JFrame implements KeyListener {
         }
 
         if (t % timeOfManagers == 0) {
-            if (percentageOfDevelopers > (float) Math.random()) {
+            if (((float) numbersOfManagers) < ((float) numbersOfDevelopers / 100) * (float) percentageOfDevelopers) {
                 numbersOfManagers++;
                 Worker hm = new Manager();
                 hm.paint(getGraphics());
@@ -108,11 +108,10 @@ public class Habitat extends JFrame implements KeyListener {
                 break;
             case KeyEvent.VK_E:
                 if (begin) {
-                    mes.setText("<html> <br>" +
-                            "Количество: " + (numbersOfDevelopers + numbersOfManagers) + "<br>" +
-                            "Разработчики: " + numbersOfDevelopers + "<br>" +
-                            "Менеджеры: " + numbersOfManagers + "<br>" +
-                            "Время: " + time + "<br></html>");
+                    mes.setText("Количество: " + (numbersOfDevelopers + numbersOfManagers) + "\n" +
+                            "Разработчики: " + numbersOfDevelopers + "\n" +
+                            "Менеджеры: " + numbersOfManagers + "\n" +
+                            "Время: " + time + "\n");
                     list.clear();
                     repaint();
                     numbersOfDevelopers = 0;
@@ -123,11 +122,10 @@ public class Habitat extends JFrame implements KeyListener {
                 break;
             case KeyEvent.VK_T:
                 if (!mas) {
-                    mes.setText("<html> <br>" +
-                            "Количество: " + (numbersOfDevelopers + numbersOfManagers) + "<br>" +
-                            "Разработчики: " + numbersOfDevelopers + "<br>" +
-                            "Менеджеры: " + numbersOfManagers + "<br>" +
-                            "Время: " + time + "<br></html>");
+                    mes.setText("Количество: " + (numbersOfDevelopers + numbersOfManagers) + "\n" +
+                            "Разработчики: " + numbersOfDevelopers + "\n" +
+                            "Менеджеры: " + numbersOfManagers + "\n" +
+                            "Время: " + time + "\n");
                 } else {
                     mes.setText("");
                 }
