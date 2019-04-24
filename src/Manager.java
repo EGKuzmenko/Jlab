@@ -31,4 +31,5 @@ public class Manager extends Worker {
     public void move() {
 
     }
+
 }
