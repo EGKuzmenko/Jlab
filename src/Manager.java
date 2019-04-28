@@ -15,8 +15,8 @@ public class Manager extends Worker {
         }
     }
 
-    Manager() {
-        super();
+    Manager(int x, int y) {
+        super(x, y);
     }
 
     @Override

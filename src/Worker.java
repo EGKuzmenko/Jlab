@@ -7,9 +7,9 @@ public abstract class Worker implements IBehaviour {
 
     public abstract Worker paint(Graphics g);
 
-    Worker() {
-        coordinateX = (int) (Math.random() * 560);
-        coordinateY = (int) (Math.random() * 560);
+    Worker(int x, int y) {
+        this.coordinateX = x;
+        this.coordinateY = y;
     }
 
     @Override
@@ -20,5 +20,15 @@ public abstract class Worker implements IBehaviour {
     @Override
     public int getY() {
         return coordinateY;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.coordinateX = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.coordinateY = y;
     }
 }

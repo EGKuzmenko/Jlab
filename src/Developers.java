@@ -15,8 +15,8 @@ public class Developers extends Worker {
         }
     }
 
-    Developers() {
-        super();
+    Developers(int x, int y) {
+        super(x, y);
     }
 
     @Override
