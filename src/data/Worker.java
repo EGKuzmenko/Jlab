@@ -1,3 +1,5 @@
+package data;
+
 import java.awt.*;
 
 public abstract class Worker implements IBehaviour {

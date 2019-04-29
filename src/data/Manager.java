@@ -1,21 +1,23 @@
+package data;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-public class Developers extends Worker {
+public class Manager extends Worker {
 
     private static Image img;
 
     static {
         try {
-            img = ImageIO.read(new File("resources/Image/developer.png"));
+            img = ImageIO.read(new File("resources/Image/manager.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    Developers(int x, int y) {
+    public Manager(int x, int y) {
         super(x, y);
     }
 

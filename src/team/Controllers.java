@@ -13,8 +13,18 @@ public class Controllers {
 
     View v;
 
-    Controllers(View v) {
+    public Controllers(View v) {
         this.v = v;
+        init();
+    }
+
+    void init() {
+        v.startButton.addActionListener(beginListener);
+        v.endButton.addActionListener(endListener);
+        v.yesButton.addActionListener(radioListener);
+        v.noButton.addActionListener(radioListener);
+        v.showInfoCheckBox.addItemListener(showInfoCheckBoxListener);
+        v.panelGen.addKeyListener(keyAdapter);
     }
 
     private void startSimulation(long t, int _numbersOfDevelopers, int _numbersOfMangers) {

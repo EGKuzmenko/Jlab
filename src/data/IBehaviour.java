@@ -1,3 +1,5 @@
+package data;
+
 public interface IBehaviour {
 
     int getX();

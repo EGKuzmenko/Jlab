@@ -1,17 +1,23 @@
+package team;
+
+import data.Developers;
+import data.Manager;
+import data.Worker;
+import data.WorkerArrayList;
 
 public class Habitat {
 
-    private static double probabilityDevelopers;
-    private static double percentageOfDevelopers;
+    static double probabilityDevelopers;
+    static double percentageOfDevelopers;
     static long time = 0;
-    private static int timeOfDevelopers;
-    private static int timeOfManagers;
+    static int timeOfDevelopers;
+    static int timeOfManagers;
     static int numbersOfDevelopers = 0;
     static int numbersOfManagers = 0;
 
     static {
         probabilityDevelopers = 0.5;
-        percentageOfDevelopers = 25;
+        percentageOfDevelopers = 5;
         timeOfDevelopers = 1;
         timeOfManagers = 1;
     }
