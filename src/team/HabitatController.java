@@ -4,6 +4,8 @@ package team;
 import data.WorkerArrayList;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.event.*;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,65 +13,77 @@ import java.util.TimerTask;
 public class HabitatController {
 
     private Timer timer;
-    HabitatView view;
-    HabitatModel habitat;
+    private HabitatView view;
+    private HabitatModel model;
 
-    public HabitatController(HabitatView view, HabitatModel habitat) {
+    public HabitatController(HabitatView view, HabitatModel model) {
         this.view = view;
-        this.habitat = habitat;
+        this.model = model;
         init();
     }
 
-    void init() {
+    private void init() {
+        view.startSimulationItem.addActionListener(beginListener);
+        view.endSimulationItem.addActionListener(endListener);
+        view.showInfoItem.addActionListener(menuInfoListener);
+
+        view.developersSlider.addChangeListener(developersChangeListener);
+        view.managersSlider.addChangeListener(managersChangeListener);
         view.startButton.addActionListener(beginListener);
         view.endButton.addActionListener(endListener);
         view.yesButton.addActionListener(radioListener);
         view.noButton.addActionListener(radioListener);
         view.showInfoCheckBox.addItemListener(showInfoCheckBoxListener);
         view.panelGen.addKeyListener(keyAdapter);
-        view.timeDevelopersArea.setText(String.valueOf(habitat.getTimeOfDevelopers()));
-        view.timeManagersArea.setText(String.valueOf(habitat.getTimeOfManagers()));
+
+        view.timeDevelopersArea.addActionListener(timeDevelopersTextFieldListener);
+        view.timeDevelopersArea.setText(String.valueOf(model.getTimeOfDevelopers()));
+
+        view.timeManagersArea.addActionListener(timeManagersTextFieldListener);
+        view.timeManagersArea.setText(String.valueOf(model.getTimeOfManagers()));
     }
 
-    public void startSimulation(long t, int _numbersOfDevelopers, int _numbersOfMangers) {
+    private void startSimulation(long t, int _numbersOfDevelopers, int _numbersOfMangers) {
         timer = new java.util.Timer();
-        habitat.numbersOfDevelopers = _numbersOfDevelopers;
-        habitat.numbersOfManagers = _numbersOfMangers;
-        habitat.time = t;
+        model.numbersOfDevelopers = _numbersOfDevelopers;
+        model.numbersOfManagers = _numbersOfMangers;
+        model.time = t;
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                habitat.time++;
-                habitat.update(habitat.time);
+                model.time++;
+                model.update(model.time);
                 if (view.yesButton.isSelected()) {
                     view.infoArea.setText(
-                            "Количество: " + (habitat.numbersOfManagers + habitat.numbersOfDevelopers) + "\n" +
-                                    "Разработчики: " + habitat.numbersOfDevelopers + "\n" +
-                                    "Менеджеры: " + habitat.numbersOfManagers + "\n" +
-                                    "Время: " + habitat.time);
+                            "Количество: " + (model.numbersOfManagers + model.numbersOfDevelopers) + "\n" +
+                                    "Разработчики: " + model.numbersOfDevelopers + "\n" +
+                                    "Менеджеры: " + model.numbersOfManagers + "\n" +
+                                    "Время: " + model.time);
                 } else {
                     view.infoArea.setText(
-                            "Количество: " + (habitat.numbersOfManagers + habitat.numbersOfDevelopers) + "\n" +
-                                    "Разработчики: " + habitat.numbersOfDevelopers + "\n" +
-                                    "Менеджеры: " + habitat.numbersOfManagers);
+                            "Количество: " + (model.numbersOfManagers + model.numbersOfDevelopers) + "\n" +
+                                    "Разработчики: " + model.numbersOfDevelopers + "\n" +
+                                    "Менеджеры: " + model.numbersOfManagers);
                 }
                 view.startButton.setEnabled(false);
+                view.startSimulationItem.setEnabled(false);
+                view.endSimulationItem.setEnabled(true);
                 view.endButton.setEnabled(true);
                 view.repaint();
             }
         }, 0, 1000);
     }
 
-    public void endSimulation() {
+    private void endSimulation() {
         timer.cancel();
         timer.purge();
         if (view.showInfoCheckBox.isSelected()) {
             Object[] options = {"Resume", "Stop"};
             int n = JOptionPane.showOptionDialog(new JFrame(),
-                    "Количество: " + (habitat.numbersOfManagers + habitat.numbersOfDevelopers) + "\n" +
-                            "Разработчики: " + habitat.numbersOfDevelopers + "\n" +
-                            "Менеджеры: " + habitat.numbersOfManagers + "\n" +
-                            "Время: " + habitat.time,
+                    "Количество: " + (model.numbersOfManagers + model.numbersOfDevelopers) + "\n" +
+                            "Разработчики: " + model.numbersOfDevelopers + "\n" +
+                            "Менеджеры: " + model.numbersOfManagers + "\n" +
+                            "Время: " + model.time,
                     "StopDialog",
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
@@ -77,7 +91,7 @@ public class HabitatController {
                     options,
                     options[1]);
             if (n == 0) {
-                startSimulation(habitat.time, habitat.numbersOfDevelopers, habitat.numbersOfManagers);
+                startSimulation(model.time, model.numbersOfDevelopers, model.numbersOfManagers);
             } else {
                 WorkerArrayList.getInstance().arrayWorkerList.clear();
                 view.repaint();
@@ -88,26 +102,30 @@ public class HabitatController {
             WorkerArrayList.getInstance().arrayWorkerList.clear();
             view.repaint();
             view.startButton.setEnabled(true);
+            view.startSimulationItem.setEnabled(false);
+            view.endSimulationItem.setEnabled(true);
             view.endButton.setEnabled(false);
         }
     }
 
-    ActionListener radioListener = new ActionListener() {
+    private ActionListener radioListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent ae) {
             switch ( ((JRadioButton)ae.getSource()).getText() ) {
                 case  "Да":
                     view.infoArea.setText(
-                            "Количество: " + (habitat.numbersOfManagers + habitat.numbersOfDevelopers) + "\n" +
-                                    "Разработчики: " + habitat.numbersOfDevelopers + "\n" +
-                                    "Менеджеры: " + habitat.numbersOfManagers + "\n" +
-                                    "Время: " + habitat.time);
+                            "Количество: " + (model.numbersOfManagers + model.numbersOfDevelopers) + "\n" +
+                                    "Разработчики: " + model.numbersOfDevelopers + "\n" +
+                                    "Менеджеры: " + model.numbersOfManagers + "\n" +
+                                    "Время: " + model.time);
+                    view.showTimeItem.setState(true);
                     break;
                 case "Нет":
                     view.infoArea.setText(
-                            "Количество: " + (habitat.numbersOfManagers + habitat.numbersOfDevelopers) + "\n" +
-                                    "Разработчики: " + habitat.numbersOfDevelopers + "\n" +
-                                    "Менеджеры: " + habitat.numbersOfManagers);
+                            "Количество: " + (model.numbersOfManagers + model.numbersOfDevelopers) + "\n" +
+                                    "Разработчики: " + model.numbersOfDevelopers + "\n" +
+                                    "Менеджеры: " + model.numbersOfManagers);
+                    view.showTimeItem.setState(false);
                     break;
                 default:
                     break;
@@ -115,18 +133,33 @@ public class HabitatController {
         }
     };
 
-    ItemListener showInfoCheckBoxListener = new ItemListener() {
+    private ItemListener showInfoCheckBoxListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 view.infoArea.setVisible(true);
+                view.showInfoItem.setState(true);
             } else {
                 view.infoArea.setVisible(false);
+                view.showInfoItem.setState(false);
             }
         }
     };
 
-    KeyAdapter keyAdapter = new KeyAdapter() {
+    private ActionListener menuInfoListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (view.showInfoItem.getState()) {
+                view.infoArea.setVisible(true);
+                view.showInfoCheckBox.setSelected(true);
+            } else {
+                view.infoArea.setVisible(false);
+                view.showInfoCheckBox.setSelected(false);
+            }
+        }
+    };
+
+    private KeyAdapter keyAdapter = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             switch (e.getKeyCode()) {
@@ -151,17 +184,57 @@ public class HabitatController {
         }
     };
 
-    ActionListener endListener = new ActionListener() {
+    private ActionListener endListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             endSimulation();
         }
     };
 
-    ActionListener beginListener = new ActionListener() {
+    private ActionListener beginListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             startSimulation(0, 0, 0);
+        }
+    };
+
+    private ChangeListener developersChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            JSlider slider = (JSlider)e.getSource();
+            double value = slider.getValue();
+            model.setProbabilityDevelopers(value/100);
+            view.panelGen.requestFocus();
+        }
+    };
+
+    private ChangeListener managersChangeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            JSlider slider = (JSlider)e.getSource();
+            double value = slider.getValue();
+            model.setPercentageOfDevelopers(value);
+            view.panelGen.requestFocus();
+        }
+    };
+
+    private ActionListener timeDevelopersTextFieldListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String value;
+            value = view.timeDevelopersArea.getText();
+            view.panelGen.requestFocus();
+            model.setTimeOfDevelopers(Integer.parseInt(value));
+        }
+    };
+
+    private ActionListener timeManagersTextFieldListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String value;
+            value = view.timeManagersArea.getText();
+            view.panelGen.requestFocus();
+            model.setTimeOfManagers(Integer.parseInt(value));
         }
     };
 
