@@ -140,6 +140,12 @@ public class View extends JFrame {
             }
         });
 
+        ButtonGroup group = new ButtonGroup();
+        JRadioButton smallButton = new JRadioButton("Small", false);
+        group.add(smallButton);
+        JRadioButton mediumButton = new JRadioButton("Medium", true);
+        group.add(mediumButton);
+
         mainPanel.add(startButton);
         mainPanel.add(endButton);
         mainPanel.add(showInfoCheckBox);
@@ -164,7 +170,9 @@ public class View extends JFrame {
             public void keyPressed(KeyEvent e) {
                 switch(e.getKeyCode()) {
                     case KeyEvent.VK_B:
-                        startSimulation(0, 0, 0);
+                        if (startButton.isEnabled()) {
+                            startSimulation(0, 0, 0);
+                        }
                         break;
                     case KeyEvent.VK_E:
                         endSimulation();
