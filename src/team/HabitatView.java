@@ -8,14 +8,13 @@ import javax.swing.*;
 import java.awt.*;
 
 
-public class View extends JFrame {
+public class HabitatView extends JFrame {
 
     private int mHeight;
     private int mWidth;
     private int mCoordinateX;
     private int mCoordinateY;
 
-    Controllers controllers;
     JLabel mes = null;
     JPanel mainPanel = null;
     JPanel panelGen = null;
@@ -31,7 +30,7 @@ public class View extends JFrame {
     JSlider developersSlider = null;
     JSlider managersSlider = null;
 
-    public View(int mWidth, int mHeight, int mCoordinateX, int mCoordinateY) {
+    public HabitatView(int mWidth, int mHeight, int mCoordinateX, int mCoordinateY) {
         this.mHeight = mHeight;
         this.mWidth = mWidth;
         this.mCoordinateX = mCoordinateX;
@@ -39,7 +38,7 @@ public class View extends JFrame {
         drawUI();
     }
 
-    public void drawUI() {
+    private void drawUI() {
         setLayout(null);
 
         mainPanel = new JPanel();
@@ -79,20 +78,20 @@ public class View extends JFrame {
         showInfoCheckBox.setBounds(0, 100, 200, 25);
         showInfoCheckBox.setFocusable(false);
 
-        timeDevelopersArea = new JTextField(String.valueOf(Habitat.timeOfDevelopers));
+        timeDevelopersArea = new JTextField();
         timeDevelopersArea.setBounds(0, 250, 20, 20);
 
-        timeManagersArea = new JTextField(String.valueOf(Habitat.timeOfManagers));
+        timeManagersArea = new JTextField();
         timeManagersArea.setBounds(0, 280, 20, 20);
 
-        developersSlider = new JSlider(JSlider.VERTICAL, 0, 100, (int) (Habitat.probabilityDevelopers * 100));
+        developersSlider = new JSlider(JSlider.VERTICAL, 0, 100, 50);
         developersSlider.setMajorTickSpacing(10);
         developersSlider.setPaintTicks(true);
         developersSlider.setPaintLabels(true);
         developersSlider.setSnapToTicks(true);
         developersSlider.setBounds(40, 250, 50, 200);
 
-        managersSlider = new JSlider(JSlider.VERTICAL, 0, 100, (int) (Habitat.percentageOfDevelopers));
+        managersSlider = new JSlider(JSlider.VERTICAL, 0, 100, 50);
         managersSlider.setMajorTickSpacing(10);
         managersSlider.setPaintTicks(true);
         managersSlider.setPaintLabels(true);
