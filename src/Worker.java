@@ -2,10 +2,10 @@ import java.awt.*;
 
 public abstract class Worker implements IBehaviour {
 
-    int coordinateX;
-    int coordinateY;
+    private int coordinateX;
+    private int coordinateY;
 
-    public abstract Worker paint(Graphics g);
+    public abstract void paint(Graphics g);
 
     Worker(int x, int y) {
         this.coordinateX = x;

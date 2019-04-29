@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class Developers extends Worker {
 
-    static Image img;
+    private static Image img;
 
     static {
         try {
@@ -20,11 +20,10 @@ public class Developers extends Worker {
     }
 
     @Override
-    public Worker paint(Graphics g) {
+    public void paint(Graphics g) {
         if (img != null) {
             g.drawImage(img, this.getX(), this.getY(), img.getWidth(null), img.getHeight(null), null);
         }
-        return null;
     }
 
     @Override
