@@ -1,9 +1,12 @@
 package team;
 
+import data.Developers;
+import data.Manager;
 import data.Worker;
-import data.WorkerArrayList;
+import data.WorkerCollections;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 
@@ -25,24 +28,30 @@ public class HabitatView extends JFrame {
     JPanel mainPanel;
     JPanel panelGen;
     JPanel showTimePanel;
+    JPanel testPanel;
     JButton startButton;
     JButton endButton;
+    JButton liveObjects;
     JCheckBox showInfoCheckBox;
     JTextArea infoArea;
     JRadioButton yesButton;
     JRadioButton noButton;
     JLabel showTimeLabel;
     JPanel parentPanel;
+    JPanel developerPanel;
+    JPanel managerPanel;
 
     JLabel timeDevelopersLabel;
     JLabel timeManagersLabel;
-    JLabel pTimeDevelopersLabel;
-    JLabel pTimeManagersLabel;
     TextField timeDevelopersArea;
     TextField timeManagersArea;
 
     JSlider developersSlider;
     JSlider managersSlider;
+    JLabel liveDevelopersLabel;
+    TextField liveDevelopersArea;
+    JLabel liveManagersLabel;
+    TextField liveManagersArea;
 
     public HabitatView(int mWidth, int mHeight, int mCoordinateX, int mCoordinateY) {
         this.mHeight = mHeight;
@@ -69,34 +78,120 @@ public class HabitatView extends JFrame {
         setJMenuBar(menuBar);
     }
 
+    private void drawDeveloperPanel() {
+        developerPanel = new JPanel();
+        developerPanel.setLayout(null);
+        developerPanel.setMaximumSize(new Dimension(300, 125));
+        developerPanel.setBounds(0, 160, 300, 125);
+        timeDevelopersLabel = new JLabel("Время появления разработчиков");
+        timeDevelopersLabel.setBounds(0, 0, 230, 25);
+        timeDevelopersArea = new TextField();
+        timeDevelopersArea.setBounds(230, 0, 30, 25);
+
+        liveDevelopersLabel = new JLabel("Время жизни разработчиков");
+        liveDevelopersLabel.setBounds(0, 30, 230, 25);
+        liveDevelopersArea = new TextField();
+        liveDevelopersArea.setText(String.valueOf(Developers.liveTime));
+        liveDevelopersArea.setBounds(230, 30, 30, 25);
+
+        developersSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
+        developersSlider.setBounds(0, 60, 300, 50);
+        developersSlider.setMajorTickSpacing(10);
+        developersSlider.setPaintTicks(true);
+        developersSlider.setPaintLabels(true);
+        developersSlider.setSnapToTicks(true);
+
+        developerPanel.add(timeDevelopersLabel);
+        developerPanel.add(timeDevelopersArea);
+        developerPanel.add(liveDevelopersLabel);
+        developerPanel.add(liveDevelopersArea);
+        developerPanel.add(developersSlider);
+    }
+
+    private void drawManagerPanel() {
+        managerPanel = new JPanel();
+        managerPanel.setLayout(null);
+        managerPanel.setMaximumSize(new Dimension(300, 125));
+        managerPanel.setBounds(0, 295, 300, 125);
+
+        timeManagersLabel = new JLabel("Период появления менеджеров");
+        timeManagersLabel.setBounds(0, 0, 230, 25);
+        timeManagersArea = new TextField();
+        timeManagersArea.setBounds(230, 0, 30, 25);
+
+        liveManagersLabel = new JLabel("Время жизни менеджеров");
+        liveManagersLabel.setBounds(0, 30, 230, 25);
+        liveManagersArea = new TextField();
+        liveManagersArea.setText(String.valueOf(Manager.liveTime));
+        liveManagersArea.setBounds(230, 30, 30, 25);
+
+        managersSlider = new JSlider();
+        managersSlider.setBounds(0, 60, 300, 50);
+        managersSlider.setMajorTickSpacing(10);
+        managersSlider.setPaintTicks(true);
+        managersSlider.setPaintLabels(true);
+        managersSlider.setSnapToTicks(true);
+
+        managerPanel.add(timeManagersLabel);
+        managerPanel.add(timeManagersArea);
+        managerPanel.add(liveManagersLabel);
+        managerPanel.add(liveManagersArea);
+        managerPanel.add(managersSlider);
+    }
+
     private void drawUI() {
+
+        Border blackline;
+
+        blackline = BorderFactory.createLineBorder(Color.BLACK);
 
         parentPanel = new JPanel();
         parentPanel.setLayout(new BorderLayout());
 
         mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+        mainPanel.setLayout(null);
 
-        startButton = new JButton("start");
-        startButton.setMaximumSize(new Dimension(100, 25));
+        testPanel = new JPanel();
+        testPanel.setLayout(null);
+        testPanel.setBounds(0, 0, 400, 150);
+        testPanel.setMaximumSize(new Dimension(600, 150));
 
-        endButton = new JButton("end");
-        endButton.setMaximumSize(new Dimension(100, 25));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(null);
+        buttonPanel.setBounds(0, 30, 100, 125);
+
+        startButton = new JButton("Start");
+        startButton.setBounds(0, 0, 100, 25);
+        endButton = new JButton("End");
+        endButton.setBounds(0, 30, 100, 25);
         endButton.setEnabled(false);
 
+        liveObjects = new JButton("Live Obj");
+        liveObjects.setBounds(0, 60, 100, 25);
+        liveObjects.setEnabled(false);
+
+        buttonPanel.add(startButton);
+        buttonPanel.add(endButton);
+        buttonPanel.add(liveObjects);
+
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(null);
+        infoPanel.setBounds(110, 0, 300, 250);
         showInfoCheckBox = new JCheckBox("Показать информацию");
-        showInfoCheckBox.setFocusable(false);
-
+        showInfoCheckBox.setBounds(0, 0, 300, 25);
+        infoArea = new JTextArea();
+        infoArea.setEditable(false);
+        infoArea.setVisible(false);
+        infoArea.setBounds(0, 30, 100, 70);
         showTimePanel = new JPanel();
-        showTimePanel.setLayout(new BoxLayout(showTimePanel, BoxLayout.LINE_AXIS));
-
+        showTimePanel.setLayout(null);
+        showTimePanel.setBounds(0, 100, 150, 70);
         showTimeLabel = new JLabel("Показать время?");
-
+        showTimeLabel.setBounds(0, 100, 150, 25);
         yesButton = new JRadioButton("Да");
-        yesButton.setFocusable(false);
-
+        yesButton.setBounds(5, 25, 45, 25);
         noButton = new JRadioButton("Нет");
-        noButton.setFocusable(false);
+        noButton.setBounds(60, 25, 45, 25);
         noButton.setSelected(true);
 
         ButtonGroup group = new ButtonGroup();
@@ -107,74 +202,35 @@ public class HabitatView extends JFrame {
         showTimePanel.add(noButton);
         showTimePanel.setVisible(false);
 
-        infoArea = new JTextArea();
-        infoArea.setEditable(false);
-        infoArea.setVisible(false);
-        infoArea.setFocusable(false);
-        infoArea.setMaximumSize(new Dimension(300, 75));
+        infoPanel.add(showInfoCheckBox);
+        infoPanel.add(infoArea);
+        infoPanel.add(showTimePanel);
+        testPanel.add(buttonPanel);
+        testPanel.add(infoPanel);
 
-        JPanel timeDevelopersPanel= new JPanel();
-        timeDevelopersPanel.setLayout(new BoxLayout(timeDevelopersPanel, BoxLayout.LINE_AXIS));
-        timeDevelopersLabel = new JLabel("Период появления разработчиков");
-        timeDevelopersArea = new TextField();
-        timeDevelopersArea.setMaximumSize(new Dimension(50, 25));
+        drawDeveloperPanel();
+        drawManagerPanel();
 
-        timeDevelopersPanel.add(timeDevelopersLabel);
-        timeDevelopersPanel.add(timeDevelopersArea);
-
-        timeManagersLabel = new JLabel("Период поялвения менеджеров");
-        timeManagersArea = new TextField();
-        timeManagersArea.setMaximumSize(new Dimension(50, 25));
-
-        pTimeDevelopersLabel = new JLabel("Вероятность полявения разработчиков");
-        developersSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        developersSlider.setMajorTickSpacing(10);
-        developersSlider.setPaintTicks(true);
-        developersSlider.setPaintLabels(true);
-        developersSlider.setSnapToTicks(true);
-
-        pTimeManagersLabel = new JLabel("Процент числа разработчиков");
-        managersSlider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-        managersSlider.setMajorTickSpacing(10);
-        managersSlider.setPaintTicks(true);
-        managersSlider.setPaintLabels(true);
-        managersSlider.setSnapToTicks(true);
-
-
-
-        mainPanel.add(startButton);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(endButton);
-        mainPanel.add(showInfoCheckBox);
-        mainPanel.add(infoArea);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(showTimePanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(timeDevelopersPanel);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(pTimeDevelopersLabel);
-        mainPanel.add(developersSlider);
-        mainPanel.add(timeManagersLabel);
-        mainPanel.add(timeManagersArea);
-        mainPanel.add(pTimeManagersLabel);
-        mainPanel.add(managersSlider);
+        mainPanel.add(testPanel);
+        mainPanel.add(developerPanel);
+        mainPanel.add(managerPanel);
+        mainPanel.setPreferredSize(new Dimension(300, 500));
 
         panelGen = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                g.drawRect(10, 10, getWidth() - 40, getHeight() - 40);
-                for (Worker worker : WorkerArrayList.getInstance().arrayWorkerList) {
+                for (Worker worker : WorkerCollections.getInstance().arrayWorkerList) {
                     worker.paint(g);
                 }
             }
         };
 
-        panelGen.setFocusable(true);
+        panelGen.setBorder(blackline);
         add(parentPanel);
 
         parentPanel.add(panelGen, BorderLayout.CENTER);
-        parentPanel.add(mainPanel, BorderLayout.LINE_END);
+        parentPanel.add(mainPanel, BorderLayout.EAST);
         setBounds(mCoordinateX, mCoordinateY, mWidth, mHeight);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -191,6 +247,7 @@ public class HabitatView extends JFrame {
         startSimulationItem.setEnabled(false);
         endSimulationItem.setEnabled(true);
         endButton.setEnabled(true);
+        liveObjects.setEnabled(true);
         repaint();
     }
 
@@ -200,6 +257,7 @@ public class HabitatView extends JFrame {
         startSimulationItem.setEnabled(true);
         endSimulationItem.setEnabled(false);
         endButton.setEnabled(false);
+        liveObjects.setEnabled(false);
     }
 
 }

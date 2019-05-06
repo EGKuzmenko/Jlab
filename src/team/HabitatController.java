@@ -2,9 +2,15 @@ package team;
 
 
 
+import data.Developers;
+import data.Manager;
+import data.WorkerCollections;
+import org.omg.PortableInterceptor.ACTIVE;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.*;
 
 public class HabitatController {
@@ -39,7 +45,21 @@ public class HabitatController {
         view.timeManagersArea.addTextListener(timeManagersTextFieldList);
         view.timeManagersArea.addActionListener(timeManagersTextFieldListener);
         view.timeManagersArea.setText(String.valueOf(model.getTimeOfManagers()));
+
+        view.liveDevelopersArea.addTextListener(liveDeveloperTextFieldList);
+        view.liveDevelopersArea.addActionListener(liveDeveloperTextFieldListener);
+        view.liveManagersArea.addTextListener(liveManagerTextFieldList);
+        view.liveManagersArea.addActionListener(liveManagerTextFieldListener);
+        view.liveObjects.addActionListener(liveObjectsListener);
     }
+
+    private ActionListener liveObjectsListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.stopSimulation(false);
+            showLiveObj();
+        }
+    };
 
     private ActionListener radioListener = new ActionListener() {
         @Override
@@ -141,38 +161,26 @@ public class HabitatController {
         }
     };
 
-    private void timeDevelopersValidation() {
+    private int formValidation(TextField textField) {
         try {
-            Integer value;
-            value = Integer.parseInt(view.timeDevelopersArea.getText());
+            Integer value = Integer.parseInt(textField.getText());
             if (value > 0) {
-                model.setTimeOfDevelopers(value);
+                return value;
             } else {
                 throw new Exception();
             }
         } catch (Exception ignored) {
-
-        }
-    }
-
-    private void timeManagersValidation() {
-        try {
-            Integer value;
-            value = Integer.parseInt(view.timeManagersArea.getText());
-            if (value > 0) {
-                model.setTimeOfManagers(value);
-            } else {
-                throw new Exception();
-            }
-        } catch (Exception ignored) {
-
+            return 0;
         }
     }
 
     private ActionListener timeDevelopersTextFieldListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            timeDevelopersValidation();
+            int curTimeDevelopers = formValidation(view.timeDevelopersArea);
+            if (curTimeDevelopers > 0) {
+                model.setTimeOfDevelopers(curTimeDevelopers);
+            }
             view.panelGen.requestFocus();
         }
     };
@@ -180,12 +188,90 @@ public class HabitatController {
     private ActionListener timeManagersTextFieldListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            timeManagersValidation();
+            int curTimeManagers = formValidation(view.timeManagersArea);
+            if (curTimeManagers > 0) {
+                model.setTimeOfManagers(curTimeManagers);
+            }
             view.panelGen.requestFocus();
         }
     };
 
-    private TextListener timeDevelopersTextFieldList = e -> timeDevelopersValidation();
-    private TextListener timeManagersTextFieldList = e ->  timeManagersValidation();
+    private ActionListener liveDeveloperTextFieldListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int curLiveTimeDevelopers = formValidation(view.liveDevelopersArea);
+            if (curLiveTimeDevelopers > 0) {
+                Developers.liveTime = curLiveTimeDevelopers;
+            }
+            view.panelGen.requestFocus();
+        }
+    };
+
+    private ActionListener liveManagerTextFieldListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int curLiveTimeManagers = formValidation(view.liveManagersArea);
+            if (curLiveTimeManagers > 0) {
+                Manager.liveTime = curLiveTimeManagers;
+            }
+            view.panelGen.requestFocus();
+        }
+    };
+
+    private TextListener timeDevelopersTextFieldList = new TextListener() {
+        @Override
+        public void textValueChanged(TextEvent e) {
+            int curTimeDevelopers = formValidation(view.timeDevelopersArea);
+            if (curTimeDevelopers > 0) {
+                model.setTimeOfDevelopers(curTimeDevelopers);
+            }
+        }
+    };
+
+    private TextListener timeManagersTextFieldList = new TextListener() {
+        @Override
+        public void textValueChanged(TextEvent e) {
+            int curTimeManagers = formValidation(view.timeManagersArea);
+            if (curTimeManagers > 0) {
+                model.setTimeOfManagers(curTimeManagers);
+            }
+        }
+    };
+
+    private TextListener liveDeveloperTextFieldList = new TextListener() {
+        @Override
+        public void textValueChanged(TextEvent e) {
+            int curLiveTimeDevelopers = formValidation(view.liveDevelopersArea);
+            if (curLiveTimeDevelopers > 0) {
+                Developers.liveTime = curLiveTimeDevelopers;
+            }
+        }
+    };
+
+    private TextListener liveManagerTextFieldList = new TextListener() {
+        @Override
+        public void textValueChanged(TextEvent e) {
+            int curLiveTimeManagers = formValidation(view.liveManagersArea);
+            if (curLiveTimeManagers > 0) {
+                Manager.liveTime = curLiveTimeManagers;
+            }
+            System.out.println(Manager.liveTime);
+        }
+    };
+
+    private void showLiveObj() {
+        Object[] options = {"Resume"};
+        int n = JOptionPane.showOptionDialog(new JFrame(),
+                WorkerCollections.getInstance().liveObjString(),
+                "LiveObjects",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+        if (n == 0) {
+            model.startSimulation(false);
+        }
+    }
 
 }

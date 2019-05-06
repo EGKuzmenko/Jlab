@@ -7,6 +7,16 @@ import java.io.IOException;
 
 public class Developers extends Worker {
 
+    public int getLiveTime() {
+        return liveTime;
+    }
+
+    public void setLiveTime(int liveTime) {
+        this.liveTime = liveTime;
+    }
+
+    public static int liveTime = 2;
+
     private static Image img;
 
     static {

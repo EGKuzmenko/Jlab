@@ -7,6 +7,16 @@ import java.io.IOException;
 
 public class Manager extends Worker {
 
+    public long getLiveTime() {
+        return liveTime;
+    }
+
+    public void setBornTime(int liveTime) {
+        this.liveTime = liveTime;
+    }
+
+    public static int liveTime = 2;
+
     private static Image img;
 
     static {
