@@ -6,7 +6,7 @@ public class WorkerCollections {
 
     private static WorkerCollections instance;
 
-    public LinkedList<Worker> arrayWorkerList;
+    public final LinkedList<Worker> arrayWorkerList;
     public TreeSet <UUID> idTreeSet;
     public HashMap <UUID, Long> bornHashMap;
 
@@ -23,7 +23,7 @@ public class WorkerCollections {
         return instance;
     }
 
-    public void cleanCollections(Long time) {
+    public synchronized void cleanCollections(Long time) {
         for (int i = 0; i < WorkerCollections.getInstance().arrayWorkerList.size(); i++) {
             Worker curWorker = WorkerCollections.getInstance().arrayWorkerList.get(i);
             Long curBornTime = WorkerCollections.getInstance().bornHashMap.get(curWorker.getId());

@@ -12,8 +12,8 @@ import java.awt.*;
 
 public class HabitatView extends JFrame {
 
-    private int mHeight;
-    private int mWidth;
+    public static int mHeight;
+    public static int mWidth;
     private int mCoordinateX;
     private int mCoordinateY;
 
@@ -26,12 +26,14 @@ public class HabitatView extends JFrame {
     JCheckBoxMenuItem showTimeItem;
 
     JPanel mainPanel;
-    JPanel panelGen;
+    public static JPanel panelGen;
     JPanel showTimePanel;
     JPanel testPanel;
     JButton startButton;
     JButton endButton;
     JButton liveObjects;
+    JButton managerAIButton;
+    JButton developerAIButton;
     JCheckBox showInfoCheckBox;
     JTextArea infoArea;
     JRadioButton yesButton;
@@ -52,6 +54,9 @@ public class HabitatView extends JFrame {
     TextField liveDevelopersArea;
     JLabel liveManagersLabel;
     TextField liveManagersArea;
+
+    JComboBox priorManagerAI;
+    JComboBox priorDeveloperAI;
 
     public HabitatView(int mWidth, int mHeight, int mCoordinateX, int mCoordinateY) {
         this.mHeight = mHeight;
@@ -211,17 +216,41 @@ public class HabitatView extends JFrame {
         drawDeveloperPanel();
         drawManagerPanel();
 
+        managerAIButton = new JButton("Manager AI");
+        managerAIButton.setBounds(0, 450, 100, 25);
+        developerAIButton = new JButton("Developer AI");
+        developerAIButton.setBounds(105, 450, 100, 25);
+        priorDeveloperAI = new JComboBox();
+        priorDeveloperAI.setBounds(130, 480, 50, 25);
+
+        for (int i = 1; i <= 10; i++) {
+            priorDeveloperAI.addItem(i);
+        }
+
+        priorManagerAI = new JComboBox();
+        priorManagerAI.setBounds(25, 480, 50, 25);
+
+        for (int i = 1; i <= 10; i++) {
+            priorManagerAI.addItem(i);
+        }
+
         mainPanel.add(testPanel);
         mainPanel.add(developerPanel);
         mainPanel.add(managerPanel);
+        mainPanel.add(managerAIButton);
+        mainPanel.add(developerAIButton);
+        mainPanel.add(priorDeveloperAI);
+        mainPanel.add(managerAIButton);
         mainPanel.setPreferredSize(new Dimension(300, 500));
 
         panelGen = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                for (Worker worker : WorkerCollections.getInstance().arrayWorkerList) {
-                    worker.paint(g);
+                synchronized (WorkerCollections.getInstance().arrayWorkerList) {
+                    for (Worker worker : WorkerCollections.getInstance().arrayWorkerList) {
+                        worker.paint(g);
+                    }
                 }
             }
         };

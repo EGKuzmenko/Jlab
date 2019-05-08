@@ -51,6 +51,11 @@ public class HabitatController {
         view.liveManagersArea.addTextListener(liveManagerTextFieldList);
         view.liveManagersArea.addActionListener(liveManagerTextFieldListener);
         view.liveObjects.addActionListener(liveObjectsListener);
+        view.managerAIButton.addActionListener(managerAIListener);
+        view.developerAIButton.addActionListener(developerAIListener);
+        view.priorDeveloperAI.addActionListener(developerAIPriorListener);
+        view.priorManagerAI.addActionListener(managerAIPriorListener);
+
     }
 
     private ActionListener liveObjectsListener = new ActionListener() {
@@ -58,6 +63,28 @@ public class HabitatController {
         public void actionPerformed(ActionEvent e) {
             model.stopSimulation(false);
             showLiveObj();
+        }
+    };
+
+    private ActionListener managerAIListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (model.managerAI.paused) {
+                model.beginManagerAI();
+                } else {
+                model.pauseManagerAI();
+            }
+        }
+    };
+
+    private ActionListener developerAIListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (model.developerAI.paused) {
+                model.beginDeveloperAI();
+            } else {
+                model.pauseDeveloperAI();
+            }
         }
     };
 
@@ -255,7 +282,6 @@ public class HabitatController {
             if (curLiveTimeManagers > 0) {
                 Manager.liveTime = curLiveTimeManagers;
             }
-            System.out.println(Manager.liveTime);
         }
     };
 
@@ -273,5 +299,21 @@ public class HabitatController {
             model.startSimulation(false);
         }
     }
+
+    private ActionListener developerAIPriorListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.developerAI.setPriority(Integer.parseInt(String.valueOf(view.priorDeveloperAI.getSelectedItem())));
+            System.out.println("developerAI priority is: " + model.developerAI.getPriority());
+        }
+    };
+
+    private ActionListener managerAIPriorListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.managerAI.setPriority(Integer.parseInt(String.valueOf(view.priorManagerAI.getSelectedItem())));
+            System.out.println("managerAI priority is: " + model.managerAI.getPriority());
+        }
+    };
 
 }

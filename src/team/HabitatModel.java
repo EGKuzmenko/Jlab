@@ -1,10 +1,6 @@
 package team;
 
-import com.sun.corba.se.spi.orbutil.threadpool.Work;
-import data.Developers;
-import data.Manager;
-import data.Worker;
-import data.WorkerCollections;
+import data.*;
 
 import javax.swing.*;
 import java.util.Timer;
@@ -22,6 +18,11 @@ public class HabitatModel {
     int numbersOfDevelopers = 0;
     int numbersOfManagers = 0;
     HabitatView view;
+    DeveloperAI developerAI = new DeveloperAI();
+    ManagerAI managerAI = new ManagerAI();
+
+    Thread threadDeveloper = new Thread(developerAI);
+    Thread threadManager = new Thread(managerAI);
 
     public HabitatModel(double probabilityDevelopers, double percentageOfDevelopers,
                         int timeOfDevelopers, int timeOfManagers, HabitatView view) {
@@ -30,31 +31,34 @@ public class HabitatModel {
         this.timeOfDevelopers = timeOfDevelopers;
         this.timeOfManagers = timeOfManagers;
         this.view = view;
+        developerAI.start();
+        managerAI.start();
     }
 
     void update(long t) {
+        synchronized (WorkerCollections.getInstance().arrayWorkerList) {
+            WorkerCollections.getInstance().cleanCollections(t);
 
-        WorkerCollections.getInstance().cleanCollections(t);
-
-        if (t % timeOfDevelopers == 0) {
-            if (probabilityDevelopers > (float) Math.random()) {
-                numbersOfDevelopers++;
-                Worker hm = new Developers(10 + (int) (Math.random() * (view.panelGen.getWidth() - 100)),
-                        10 + (int) (Math.random() * (view.panelGen.getHeight() - 100)));
-                WorkerCollections.getInstance().arrayWorkerList.add(hm);
-                WorkerCollections.getInstance().idTreeSet.add(hm.getId());
-                WorkerCollections.getInstance().bornHashMap.put(hm.getId(), time);
+            if (t % timeOfDevelopers == 0) {
+                if (probabilityDevelopers > (float) Math.random()) {
+                    numbersOfDevelopers++;
+                    Worker hm = new Developers(10 + (int) (Math.random() * (view.panelGen.getWidth() - 100)),
+                            10 + (int) (Math.random() * (view.panelGen.getHeight() - 100)));
+                    WorkerCollections.getInstance().arrayWorkerList.add(hm);
+                    WorkerCollections.getInstance().idTreeSet.add(hm.getId());
+                    WorkerCollections.getInstance().bornHashMap.put(hm.getId(), time);
+                }
             }
-        }
 
-        if (t % timeOfManagers == 0) {
-            if (((float) numbersOfManagers) < ((float) numbersOfDevelopers / 100) * (float) percentageOfDevelopers) {
-                numbersOfManagers++;
-                Worker hm = new Manager(10 + (int) (Math.random() * (view.panelGen.getWidth()) - 100),
-                        10 + (int) (Math.random() * (view.panelGen.getWidth() - 100)));
-                WorkerCollections.getInstance().arrayWorkerList.add(hm);
-                WorkerCollections.getInstance().idTreeSet.add(hm.getId());
-                WorkerCollections.getInstance().bornHashMap.put(hm.getId(), time);
+            if (t % timeOfManagers == 0) {
+                if (((float) numbersOfManagers) < ((float) numbersOfDevelopers / 100) * (float) percentageOfDevelopers) {
+                    numbersOfManagers++;
+                    Worker hm = new Manager(10 + (int) (Math.random() * (view.panelGen.getWidth()) - 100),
+                            10 + (int) (Math.random() * (view.panelGen.getWidth() - 100)));
+                    WorkerCollections.getInstance().arrayWorkerList.add(hm);
+                    WorkerCollections.getInstance().idTreeSet.add(hm.getId());
+                    WorkerCollections.getInstance().bornHashMap.put(hm.getId(), time);
+                }
             }
         }
     }
@@ -100,6 +104,9 @@ public class HabitatModel {
             WorkerCollections.getInstance().idTreeSet.clear();
             WorkerCollections.getInstance().bornHashMap.clear();
             WorkerCollections.getInstance().arrayWorkerList.clear();
+        } else {
+            beginDeveloperAI();
+            beginManagerAI();
         }
         timer.schedule(new TimerTask() {
             @Override
@@ -108,7 +115,7 @@ public class HabitatModel {
                 update(time);
                 view.startSimulation(generateStatisticString(true), generateStatisticString(false));
             }
-        }, 0, 1000);
+        }, 0, 10);
     }
 
     String generateStatisticString(boolean withTime) {
@@ -129,6 +136,8 @@ public class HabitatModel {
     public void stopSimulation(boolean selected) {
         timer.cancel();
         timer.purge();
+        pauseDeveloperAI();
+        pauseManagerAI();
         if (selected) {
             Object[] options = {"Resume",
                     "Stop"};
@@ -149,4 +158,35 @@ public class HabitatModel {
             view.stopSimulation();
         }
     }
+
+    void pauseManagerAI() {
+        if (!managerAI.paused) {
+            managerAI.paused = true;
+        }
+    }
+
+    void beginManagerAI() {
+        if (managerAI.paused) {
+            synchronized (managerAI.obj) {
+                managerAI.paused = false;
+                managerAI.obj.notify();
+            }
+        }
+    }
+
+    void pauseDeveloperAI() {
+        if (!developerAI.paused) {
+            developerAI.paused = true;
+        }
+    }
+
+    void beginDeveloperAI() {
+        if (developerAI.paused) {
+            synchronized (developerAI.obj) {
+                developerAI.paused = false;
+                developerAI.obj.notify();
+            }
+        }
+    }
+
 }
